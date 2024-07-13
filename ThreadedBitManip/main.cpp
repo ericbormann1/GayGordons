@@ -135,6 +135,9 @@ void simulateGames(int numSimsThisThread, int offset, int& unsolvableCount, mute
             if (!isSolvable(&active)) {
                 lock_guard<mutex> lock(mtx);
                 unsolvableCount++;
+                if (unsolvableCount % 200000 == 0) {
+                    cout << "Offset counter: " << unsolvableCount / 200000 << " million" << endl;
+                }
             }
         }
     }
@@ -172,6 +175,7 @@ int main() {
         threads.emplace_back(simulateGames, simulationsForThisThread, offsetCounter, ref(unsolvableCount), ref(mtx), ref(gameArray));
         offsetCounter += simulationsForThisThread;
     }
+    
     for (auto& t : threads) {
         t.join();
     }
